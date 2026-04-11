@@ -1,3 +1,5 @@
+![npm](https://img.shields.io/npm/v/vote-battle-sdk?color=blueviolet) ![Stacks Mainnet](https://img.shields.io/badge/Stacks-Mainnet-blueviolet) ![license](https://img.shields.io/badge/license-MIT-blue)
+
 # vote-battle-sdk
 
 TypeScript SDK for interacting with the Vote Battle smart contract on Stacks.
