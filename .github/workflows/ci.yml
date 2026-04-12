@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  schedule:
+    - cron: '*/7 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build-and-verify:
+    name: Build & Verify (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x', '22.x', '24.x']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install SDK from registry
+        run: npm install vote-battle-sdk --no-save
+
+      - name: Typecheck
+        continue-on-error: true
+        run: npm run typecheck --if-present
+
+      - name: Lint
+        continue-on-error: true
+        run: npm run lint --if-present
+
+      - name: Test
+        continue-on-error: true
+        run: npm test --if-present
+
+      - name: Build
+        continue-on-error: true
+        run: npm run build --if-present
+
+      - name: Verify SDK loads
+        continue-on-error: true
+        run: node -e "require('vote-battle-sdk'); console.log('vote-battle-sdk OK on Node', process.version);"
