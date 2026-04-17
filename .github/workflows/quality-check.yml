@@ -1,0 +1,37 @@
+name: Quality Check
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '10 */7 * * *'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify vote-battle-sdk from npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Prepare clean environment
+        run: mkdir -p /tmp/vote-battle-sdk-check
+
+      - name: Initialize project
+        working-directory: /tmp/vote-battle-sdk-check
+        run: npm init -y
+
+      - name: Install vote-battle-sdk from registry
+        working-directory: /tmp/vote-battle-sdk-check
+        run: npm install vote-battle-sdk
+
+      - name: Verify module loads
+        working-directory: /tmp/vote-battle-sdk-check
+        run: node -e "const sdk = require('vote-battle-sdk'); console.log('vote-battle-sdk OK, exports:', Object.keys(sdk));"
+
+      - name: Show dependency tree
+        working-directory: /tmp/vote-battle-sdk-check
+        run: npm ls --all
